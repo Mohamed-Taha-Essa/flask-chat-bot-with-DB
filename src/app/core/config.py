@@ -1,6 +1,8 @@
 import os 
 from dataclasses import dataclass
+import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 @dataclass
 class Settings:
 
@@ -16,8 +18,7 @@ class Settings:
 
 
     #database settings 
-    # DATABASE_URL:str = 'postgresql://postgres:password@localhost:5432/trello_tasks'
-    DATABASE_URL:str ='sqlite:///./test.db'
+    DATABASE_URL:str = f"sqlite:///{os.path.join(BASE_DIR, 'my_database.db')}"
 
 def get_settings()->Settings:
     return(Settings(
@@ -33,7 +34,7 @@ def get_settings()->Settings:
 
 
             #database settings 
-            DATABASE_URL  = os.getenv( "DATABASE_URL", 'sqlite:///./test.db'
+            DATABASE_URL  = os.getenv( "DATABASE_URL", f"sqlite:///{os.path.join(BASE_DIR, 'my_database.db')}"
         ), 
     ))
     

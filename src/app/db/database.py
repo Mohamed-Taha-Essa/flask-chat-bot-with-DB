@@ -2,7 +2,7 @@
 from sqlalchemy  import create_engine ,text 
 from sqlalchemy.orm import Session ,sessionmaker,declarative_base
 from app.core.config import settings
-
+from contextlib import contextmanager
 Base = declarative_base()
 
 #create database engine 
@@ -31,4 +31,18 @@ def get_db():
     try:        # i have connection bool (set of db connection each connection uder  without colse that is not return to pool)
         yield db  # to give me one session (db connection)for each request and wait until query is end
     finally: # to close connection after query 
-        db.cose()
+        db.close()
+
+
+@contextmanager
+def get_db_session():
+    db = SessionLocal()
+    try:
+        yield db
+        db.commit()
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()

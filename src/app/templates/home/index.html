@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Chat System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        {% if current_user.is_authenticated %}
+            <div class="card border-0 shadow-sm bg-light mb-4">
+                <div class="card-body py-5">
+                    <h1 class="display-5 fw-bold mb-3">Welcome, {{ current_user.username }}!</h1>
+                    <p class="lead text-muted">You are successfully logged into the Chat System.</p>
+                    <div class="mt-4">
+                        <a href="{{ url_for('auth.profile') }}" class="btn btn-primary btn-lg me-2">View Profile</a>
+                        <a href="#" class="btn btn-success btn-lg">Start Chat</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card border-0 shadow-sm bg-gradient mb-4">
+                <div class="card-body py-5">
+                    <h1 class="display-4 fw-bold mb-3">Welcome to Chat System</h1>
+                    <p class="lead text-muted mb-4">Connect, communicate, and collaborate with ease.</p>
+                    <div>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-2">Login</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-success btn-lg">Register</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3">💬</div>
+                        <h5 class="card-title fw-bold">Real-time Chat</h5>
+                        <p class="card-text text-muted">Connect with others instantly in real-time conversations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3">🔒</div>
+                        <h5 class="card-title fw-bold">Secure</h5>
+                        <p class="card-text text-muted">Your conversations are protected with industry-standard security.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="display-4 mb-3">⚡</div>
+                        <h5 class="card-title fw-bold">Fast & Reliable</h5>
+                        <p class="card-text text-muted">Experience lightning-fast performance and reliability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

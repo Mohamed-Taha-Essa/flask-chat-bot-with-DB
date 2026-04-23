@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Chat System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 mt-5">
+            <div class="card-header bg-primary text-white py-3">
+                <h3 class="mb-0 fw-bold">User Profile</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 24px;">
+                                {{ user.username[0].upper() }}
+                            </div>
+                            <div class="ms-3">
+                                <h4 class="mb-0 fw-bold">{{ user.username }}</h4>
+                                <p class="text-muted mb-0">Member since {{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'Unknown' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Email</p>
+                        <p class="fw-semibold">{{ user.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Role</p>
+                        <p class="fw-semibold">
+                            <span class="badge bg-info">{{ user.roles.capitalize() }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Account Status</p>
+                        <p class="fw-semibold">
+                            <span class="badge bg-success">Active</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Joined</p>
+                        <p class="fw-semibold">{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'Unknown' }}</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex gap-2">
+                    <a href="/" class="btn btn-secondary flex-grow-1">Back to Home</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger flex-grow-1">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
