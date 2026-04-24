@@ -6,7 +6,8 @@ It uses the application factory pattern (defined in app/__init__.py) for
 better code organization and testability.
 """
 
-from app import create_app, socketio
+from app import create_app
+from app.extensions import socketio
 from app.core.config import settings
 from flask import jsonify
 

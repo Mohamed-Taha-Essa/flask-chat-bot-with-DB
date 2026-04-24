@@ -4,8 +4,8 @@ Flask-Login Authentication Configuration
 This module configures Flask-Login for user authentication and session management.
 
 WHAT THIS FILE DOES:
-- Initializes Flask-Login's LoginManager
-- Provides the user_loader callback function required by Flask-Login
+- Registers the user_loader callback with Flask-Login (which is initialized in app.extensions)
+- Provides the load_user function that reconstructs User objects from stored session data
 - Enables session-based authentication throughout the Flask application
 
 WHY WE USE load_user:
@@ -30,14 +30,14 @@ The load_user function:
 - Uses a new database session for each call (stateless)
 """
 
-from flask_login import LoginManager
+from app.extensions import login_manager  # Import pre-initialized extension
 from app.models import User
 from app.db.database import SessionLocal  # Use SessionLocal for read-only operations
 
 
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'  # Redirect unauthenticated users to login page
-login_manager.login_message = 'Please log in to access this page.'  # Optional: custom message
+# Configure login_manager settings
+login_manager.login_view = 'auth.login'  # Redirect to login page for protected routes
+login_manager.login_message = 'Please log in to access this page.'
 
 
 @login_manager.user_loader

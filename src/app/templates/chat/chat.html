@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm mx-auto d-flex flex-column" style="max-width: 800px; height: 75vh;">
+        <!-- Header -->
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="mb-0 fw-bold">Chat</h5>
+            {% if username %}
+            <small class="text-muted">Welcome, {{ username }}</small>
+            {% endif %}
+        </div>
+
+        <!-- Messages Area (Scrollable) -->
+        <div class="card-body bg-light overflow-auto d-flex flex-column p-4 gap-3">
+            
+            <!-- User 2 Message (Left Aligned) -->
+            <div class="d-flex justify-content-start">
+                <div class="bg-white border py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0 text-dark">Hello! How can I help you today?</p>
+                </div>
+            </div>
+
+            <!-- User 1 Message (Right Aligned) -->
+            <div class="d-flex justify-content-end">
+                <div class="bg-primary text-white py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0">Hi there! I was wondering if you could help me build a chat interface.</p>
+                </div>
+            </div>
+
+            <!-- User 2 Message (Left Aligned) -->
+            <div class="d-flex justify-content-start">
+                <div class="bg-white border py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0 text-dark">Absolutely! We can use Bootstrap 5 to make it clean and responsive.</p>
+                </div>
+            </div>
+
+            <!-- User 1 Message (Right Aligned) -->
+            <div class="d-flex justify-content-end">
+                <div class="bg-primary text-white py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0">That sounds perfect. Thank you!</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Input Area (Fixed at bottom) -->
+        <div class="card-footer bg-white border-top p-3">
+            <form action="" method="POST" class="m-0">
+                <div class="input-group">
+                    <input type="text" class="form-control py-2" placeholder="Type your message..." aria-label="Type your message" required>
+                    <button class="btn btn-primary px-4" type="submit">
+                        Send
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
