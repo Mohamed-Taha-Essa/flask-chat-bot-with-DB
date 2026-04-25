@@ -14,8 +14,8 @@
         </div>
 
         <!-- Messages Area (Scrollable) -->
-        <div class="card-body bg-light overflow-auto d-flex flex-column p-4 gap-3">
-            
+        <div class="card-body bg-light overflow-auto d-flex flex-column p-4 gap-3" id="messages">
+
             <!-- User 2 Message (Left Aligned) -->
             <div class="d-flex justify-content-start">
                 <div class="bg-white border py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
@@ -23,35 +23,15 @@
                 </div>
             </div>
 
-            <!-- User 1 Message (Right Aligned) -->
-            <div class="d-flex justify-content-end">
-                <div class="bg-primary text-white py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
-                    <p class="mb-0">Hi there! I was wondering if you could help me build a chat interface.</p>
-                </div>
-            </div>
-
-            <!-- User 2 Message (Left Aligned) -->
-            <div class="d-flex justify-content-start">
-                <div class="bg-white border py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
-                    <p class="mb-0 text-dark">Absolutely! We can use Bootstrap 5 to make it clean and responsive.</p>
-                </div>
-            </div>
-
-            <!-- User 1 Message (Right Aligned) -->
-            <div class="d-flex justify-content-end">
-                <div class="bg-primary text-white py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
-                    <p class="mb-0">That sounds perfect. Thank you!</p>
-                </div>
-            </div>
-
         </div>
 
         <!-- Input Area (Fixed at bottom) -->
         <div class="card-footer bg-white border-top p-3">
-            <form action="" method="POST" class="m-0">
+            <form action="" class="m-0">
                 <div class="input-group">
-                    <input type="text" class="form-control py-2" placeholder="Type your message..." aria-label="Type your message" required>
-                    <button class="btn btn-primary px-4" type="submit">
+                    <input type="text" id="messageInput" class="form-control py-2" placeholder="Type your message..."
+                        aria-label="Type your message" required>
+                    <button class="btn btn-primary px-4" id="sendBtn" type="submit">
                         Send
                     </button>
                 </div>
@@ -59,4 +39,145 @@
         </div>
     </div>
 </div>
+<!-- Loading dots CSS -->
+<style>
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 0;
+    }
+
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background-color: #6c757d;
+        border-radius: 50%;
+        display: inline-block;
+        animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-indicator span:nth-child(1) {
+        animation-delay: -0.32s;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: -0.16s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0s;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        80%,
+        100% {
+            transform: scale(0);
+            opacity: 0.4;
+        }
+
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+
+<script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+    integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+    crossorigin="anonymous"></script>
+<script>
+    const socket = io();
+    const messages = document.getElementById("messages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // Append message: "user" = right (blue), "bot" = left (white)
+    function appendMessage(message, sender) {
+        const wrapper = document.createElement("div");
+
+        if (sender === "user") {
+            wrapper.classList.add("d-flex", "justify-content-end");
+            wrapper.innerHTML = `
+                <div class="bg-primary text-white py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0">${message}</p>
+                </div>`;
+        } else {
+            wrapper.classList.add("d-flex", "justify-content-start");
+            wrapper.innerHTML = `
+                <div class="bg-white border py-2 px-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                    <p class="mb-0 text-dark">${message}</p>
+                </div>`;
+        }
+
+        messages.appendChild(wrapper);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Show typing/loading indicator
+    function showLoading() {
+        const loader = document.createElement("div");
+        loader.id = "loading-indicator";
+        loader.classList.add("d-flex", "justify-content-start");
+        loader.innerHTML = `
+            <div class="bg-white border py-2 px-3 rounded-3 shadow-sm">
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>`;
+        messages.appendChild(loader);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Remove typing/loading indicator
+    function hideLoading() {
+        const loader = document.getElementById("loading-indicator");
+        if (loader) loader.remove();
+    }
+
+    // Toggle input disabled state
+    function setInputDisabled(disabled) {
+        messageInput.disabled = disabled;
+        sendBtn.disabled = disabled;
+        if (!disabled) messageInput.focus();
+    }
+
+    function sendMessage() {
+        const message = messageInput.value.trim();
+        if (message) {
+            messageInput.value = "";
+            appendMessage(message, "user");
+            showLoading();
+            setInputDisabled(true);
+
+            console.log(message);
+            socket.emit("message", message);
+        }
+    }
+
+    // Prevent form submit reload & send message
+    sendBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        sendMessage();
+    });
+
+    messageInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Listen for AI response
+    socket.on("message", function (data) {
+        console.log(data);
+        hideLoading();
+        setInputDisabled(false);
+        appendMessage(data.response, "bot");
+    });
+</script>
+
+
 {% endblock %}

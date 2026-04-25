@@ -1,14 +1,31 @@
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from dotenv import load_dotenv
 import os
-from langchain_community.utilities import SQLDatabase ,SQLDatabaseToolkit ,SQLDatabaseChain 
-from langchain_community.agent_toolkits import SQLDatabaseAgent ,create_sql_agent
+from langchain_community.utilities import SQLDatabase  
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
+
+
+
 from sqlalchemy import create_engine,inspect    
 from app.db.database import engine    
-from app.db.session import get_db_session
+from app.db.database import get_db_session
 from app.core.config import settings
 load_dotenv()
 
+
+# Create LLM object
+# All free-tier HF models are registered as "conversational" only,
+# so we use ChatHuggingFace wrapper which is compatible with create_sql_agent
+_endpoint = HuggingFaceEndpoint(
+    repo_id="Qwen/Qwen2.5-72B-Instruct",
+    task="conversational",
+    huggingfacehub_api_token=os.getenv("HUGGINGFACEHUB_API_TOKEN"),
+    max_new_tokens=512,
+    do_sample=False,
+    provider="novita",
+)
+llm = ChatHuggingFace(llm=_endpoint)
 
 def initialize_sql_agent():
     #create inspector to get tables name 
@@ -20,20 +37,10 @@ def initialize_sql_agent():
     #create  langchain  sql database object with tables names only for security
     sql_db = SQLDatabase.from_uri(
         settings.DATABASE_URL, 
-        engine=engine,
         sample_rows_in_table_info=3,        
         include_tables=existing_tables) 
 
-    #create llm object 
-    llm = HuggingFaceEndpoint(
-        repo_id="deepseek-ai/DeepSeek-R1-0528",
-        task="text-generation",
-        max_new_tokens=512,
-        do_sample=False,
-        repetition_penalty=1.03,
-        provider="auto",  # let Hugging Face choose the best provider for you
-    )
-
+    
     #create toolkit 
     toolkit = SQLDatabaseToolkit(db=sql_db , llm=llm)
 
@@ -42,7 +49,6 @@ def initialize_sql_agent():
 You are a helpful assistant who can answer questions about database.
 Use the following tools to answer questions.
 Always use the tools to get the answer.
-Never use the tools to get the answer.
 CRITICAL INSTRUCTION:
 1. NEVER MENTION DATABASE SQL QUERY OR SCHEMA OR TABLE OR DATABASE IN YOUR ANSWER
 2. NEVER GIVE ANY TECHNICAL INFORMATION ABOUT THE DATABASE
@@ -64,9 +70,10 @@ RESPONSE TEMPLATE :
     #CREATE sql agent 
     sql_agent =create_sql_agent(
     llm=llm , 
-    db=sql_db ,
     toolkit=toolkit , 
     system_prompt=system_prompt , 
     verbose=True , 
     )
+
+    return sql_agent
 
