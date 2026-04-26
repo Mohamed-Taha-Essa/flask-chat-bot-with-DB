@@ -27,11 +27,12 @@ class User(Base ,UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-    def has_access_to_table(self, table_name):
+    @property
+    def has_access_to_tables(self):
         rol_permissions = {
             'admin': ['orders', 'products', 'users' , 'category'  , 'chat_sessions'],
             'manager': ['orders', 'products'],
             'customer': ['orders', 'products']
         }
 
-        return table_name in rol_permissions.get(self.roles, [])
+        return rol_permissions.get(self.roles, [])

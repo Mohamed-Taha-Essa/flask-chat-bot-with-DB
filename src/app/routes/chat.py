@@ -6,7 +6,6 @@ from app.extensions import socketio
 from .ai import initialize_sql_agent 
 
 chat_bp = Blueprint('chat' , __name__, template_folder='templates' )
-agent = initialize_sql_agent()
 
 @chat_bp.route('/chat')
 @login_required
@@ -17,8 +16,8 @@ def chat():
 @socketio.on('message')
 def handle_message(data):
   
-   
-
+    agent = initialize_sql_agent(current_user.roles)
+    print('role:' ,current_user.roles)
     response = agent.invoke({"input": data})
     print(response)
     socketio.emit('message' , {'response' : response['output']})
