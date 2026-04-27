@@ -1,0 +1,69 @@
+{% extends "admin/base_admin.html" %}
+
+{% set active_page = 'chat_sessions' %}
+{% set page_title = '💬 Chat Sessions Management' %}
+
+{% block admin_content %}
+<div class="table-card">
+    <div class="table-header">
+        <h5>💬 All Chat Sessions</h5>
+        <div class="search-box">
+            <input type="text" placeholder="Search sessions..." id="searchChatSessions">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover" id="chatSessionsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_chat_sessions %}
+                    {% for session in all_chat_sessions %}
+                    <tr>
+                        <td>{{ session.id }}</td>
+                        <td>{{ session.user.username if session.user else 'N/A' }}</td>
+                        <td>{{ session.created_at.strftime('%Y-%m-%d %H:%M') if session.created_at else 'N/A' }}</td>
+                        <td>
+                            <span class="badge-status badge-success">Active</span>
+                        </td>
+                        <td>
+                            <button class="btn-action btn-view">View</button>
+                            <button class="btn-action btn-edit">Edit</button>
+                            <button class="btn-action btn-delete">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i>💬</i>
+                            No chat sessions found
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="table-pagination">
+        <span class="page-info">Showing {{ all_chat_sessions|length }} chat sessions</span>
+        <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+    setupSearch('searchChatSessions', 'chatSessionsTable');
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "admin/base_admin.html" %}
+
+{% set active_page = 'categories' %}
+{% set page_title = '🏷️ Categories Management' %}
+
+{% block admin_content %}
+<div class="table-card">
+    <div class="table-header">
+        <h5>🏷️ All Categories</h5>
+        <div class="search-box">
+            <input type="text" placeholder="Search categories..." id="searchCategories">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover" id="categoriesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_categories %}
+                    {% for category in all_categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description[:50] }}...</td>
+                        <td>
+                            <button class="btn-action btn-view">View</button>
+                            <button class="btn-action btn-edit">Edit</button>
+                            <button class="btn-action btn-delete">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <i>🏷️</i>
+                            No categories found
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="table-pagination">
+        <span class="page-info">Showing {{ all_categories|length }} categories</span>
+        <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+    setupSearch('searchCategories', 'categoriesTable');
+</script>
+{% endblock %}

@@ -25,7 +25,8 @@ import app.core.auth  # noqa: F401
 from app.routes.auth import auth_bp
 from app.routes.main import main_bp
 from app.routes.chat import chat_bp
-
+from app.admin.admin import admin_bp
+from app.routes.product import product_bp
 
 def create_app() -> Flask:
     """
@@ -59,5 +60,7 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(chat_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(product_bp)
     
     return app

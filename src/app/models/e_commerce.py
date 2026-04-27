@@ -22,6 +22,7 @@ class Product(Base):
     description = Column(String(255), nullable=True)
     price = Column(Float, nullable=False)
     stock_quantity = Column(Integer, nullable=False)
+    image_url = Column(String(500), nullable=True)
     
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
 

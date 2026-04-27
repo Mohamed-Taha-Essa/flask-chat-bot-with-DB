@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Product Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --primary-hover: #4338ca;
+    }
+
+    .product-detail-page {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+        min-height: 100vh;
+    }
+
+    .breadcrumb-nav {
+        background: white;
+        padding: 1rem 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .product-detail-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .product-image-section {
+        background: #f8fafc;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+    }
+
+    .product-image {
+        max-width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+
+    .product-info-section {
+        padding: 2.5rem;
+    }
+
+    .product-category-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+
+    .product-rating {
+        margin-bottom: 1.5rem;
+    }
+
+    .stars {
+        color: #fbbf24;
+        font-size: 1.25rem;
+    }
+
+    .rating-count {
+        color: #64748b;
+        margin-left: 0.5rem;
+    }
+
+    .product-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .product-description {
+        color: #475569;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+    }
+
+    .product-meta {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .meta-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .meta-item:last-child {
+        border-bottom: none;
+    }
+
+    .meta-label {
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .meta-value {
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .quantity-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .quantity-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-add-cart {
+        flex: 1;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.125rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-cart:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-wishlist {
+        background: white;
+        border: 2px solid #e5e7eb;
+        color: #475569;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-wishlist:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        color: var(--primary-hover);
+        transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+        .product-image-section {
+            padding: 1rem;
+            min-height: 300px;
+        }
+
+        .product-image {
+            max-height: 300px;
+        }
+
+        .product-info-section {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.5rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-detail-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('product.products') }}" class="text-decoration-none">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Back Button -->
+        <div class="mt-4">
+            <a href="{{ url_for('product.products') }}" class="back-button">
+                ← Back to Products
+            </a>
+        </div>
+
+        <!-- Product Detail Card -->
+        <div class="product-detail-card">
+            <div class="row g-0">
+                <!-- Product Image -->
+                <div class="col-lg-6">
+                    <div class="product-image-section">
+                        <img src="{{ product.image_url or 'https://via.placeholder.com/500x500?text=Product' }}" 
+                             alt="{{ product.name }}" 
+                             class="product-image"
+                             onerror="this.src='https://via.placeholder.com/500x500?text=Product'">
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-lg-6">
+                    <div class="product-info-section">
+                        <span class="product-category-badge">
+                            {{ product.category.name if product.category else 'General' }}
+                        </span>
+                        
+                        <h1 class="product-title">{{ product.name }}</h1>
+                        
+                        <div class="product-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-count">(4.5) - 128 reviews</span>
+                        </div>
+                        
+                        <div class="product-price">${{ product.price }}</div>
+                        
+                        <div class="product-description">
+                            {{ product.description or 'No description available for this product.' }}
+                        </div>
+
+                        <!-- Product Meta -->
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Availability:</span>
+                                <span class="meta-value">
+                                    {% if product.stock_quantity > 0 %}
+                                        <span style="color: #10b981;">In Stock ({{ product.stock_quantity }} available)</span>
+                                    {% else %}
+                                        <span style="color: #ef4444;">Out of Stock</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Category:</span>
+                                <span class="meta-value">{{ product.category.name if product.category else 'General' }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">SKU:</span>
+                                <span class="meta-value">SKU-{{ product.id }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Selector -->
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
+                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="{{ product.stock_quantity }}">
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn-add-cart" onclick="addToCart()">
+                                🛒 Add to Cart
+                            </button>
+                            <button class="btn-wishlist" onclick="addToWishlist()">
+                                ❤️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const maxQuantity = {{ product.stock_quantity }};
+
+    function increaseQuantity() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) < maxQuantity) {
+            input.value = parseInt(input.value) + 1;
+        }
+    }
+
+    function decreaseQuantity() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    function addToCart() {
+        const quantity = document.getElementById('quantity').value;
+        const btn = document.querySelector('.btn-add-cart');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '✓ Added!';
+        btn.style.background = '#10b981';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+        }, 2000);
+        
+        alert('Added ' + quantity + ' item(s) to cart!');
+    }
+
+    function addToWishlist() {
+        const btn = document.querySelector('.btn-wishlist');
+        if (btn.innerHTML === '❤️') {
+            btn.innerHTML = '❤️';
+            btn.style.background = '#fee2e2';
+            btn.style.borderColor = '#ef4444';
+            btn.style.color = '#ef4444';
+            alert('Added to wishlist!');
+        } else {
+            btn.innerHTML = '🤍';
+            btn.style.background = '';
+            btn.style.borderColor = '#e5e7eb';
+            btn.style.color = '#475569';
+            alert('Removed from wishlist!');
+        }
+    }
+
+    // Prevent negative quantity input
+    document.getElementById('quantity').addEventListener('change', function() {
+        if (this.value < 1) this.value = 1;
+        if (this.value > maxQuantity) this.value = maxQuantity;
+    });
+</script>
+{% endblock %}

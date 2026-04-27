@@ -1,0 +1,69 @@
+{% extends "admin/base_admin.html" %}
+
+{% set active_page = 'users' %}
+{% set page_title = '👥 Users Management' %}
+
+{% block admin_content %}
+<div class="table-card">
+    <div class="table-header">
+        <h5>👥 All Users</h5>
+        <div class="search-box">
+            <input type="text" placeholder="Search users..." id="searchUsers">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover" id="usersTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_users %}
+                    {% for user in all_users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge-status badge-info">{{ user.roles|capitalize }}</span></td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else 'N/A' }}</td>
+                        <td>
+                            <button class="btn-action btn-view">View</button>
+                            <button class="btn-action btn-edit">Edit</button>
+                            <button class="btn-action btn-delete">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i>📭</i>
+                            No users found
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="table-pagination">
+        <span class="page-info">Showing {{ all_users|length }} users</span>
+        <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+    setupSearch('searchUsers', 'usersTable');
+</script>
+{% endblock %}
